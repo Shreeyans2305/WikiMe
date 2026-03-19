@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import "./AIPromptWizard.css";
+import "./AIpromptwizard.css";
 
 // ─── Questions the wizard asks ────────────────────────────────────────────────
 const QUESTIONS = [

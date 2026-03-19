@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import "./ImageUploader.css";
+import "./Imageuploader.css";
 import { uploadImage } from "../utils/uploadImage";
 /**
  * ImageUploader
