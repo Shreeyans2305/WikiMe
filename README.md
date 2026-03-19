@@ -1,6 +1,6 @@
 # WikiMe
 
-> Make a Wikipedia-style page about anyone — your grandma, your cat, your mate Jason. No facts required.
+> Make a Wikipedia-style page about anyone — your grandma, your cat, your friends. No facts required.
 
 WikiMe is a web app for creating funny, satirical, and completely fictional Wikipedia-style pages about people and characters you know. It is **not** meant to be accurate. It is entirely for entertainment. Every published page carries a disclaimer to make that clear.
 
