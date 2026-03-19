@@ -6,17 +6,33 @@ import AIPromptWizard from "../componenets/Aipromptwizard";
 import "./CreateWiki.css";
 
 const emptyWiki = {
-  name: "", subtitle: "", imageUrl: "", imageCaption: "",
-  born: "", died: "", occupation: "", spouse: "", children: [],
-  nationality: "", lead: "",
+  name: "",
+  subtitle: "",
+  imageUrl: "",
+  imageCaption: "",
+  born: "",
+  died: "",
+  occupation: "",
+  spouse: "",
+  children: [],
+  nationality: "",
+  lead: "",
   sections: {
-    earlyLife: "", marriageAndChildren: "", death: "",
-    philosophy: "", publishedWorks: "", recognition: "",
+    earlyLife: "",
+    marriageAndChildren: "",
+    death: "",
+    philosophy: "",
+    publishedWorks: "",
+    recognition: "",
   },
   references: [],
-  seeAlso: [], externalLinks: [], categories: [],
+  seeAlso: [],
+  externalLinks: [],
+  categories: [],
   lastEdited: new Date().toLocaleDateString("en-US", {
-    month: "long", day: "numeric", year: "numeric",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
   }),
 };
 
@@ -29,18 +45,32 @@ function StepNameSlug({ onNext }) {
   const handleNameChange = (e) => {
     const val = e.target.value;
     setName(val);
-    setSlug(val.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-"));
+    setSlug(
+      val
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .replace(/\s+/g, "-"),
+    );
     setSlugError("");
   };
 
   const handleSlugChange = (e) => {
-    setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "").replace(/--+/g, "-"));
+    setSlug(
+      e.target.value
+        .toLowerCase()
+        .replace(/[^a-z0-9-]/g, "")
+        .replace(/--+/g, "-"),
+    );
     setSlugError("");
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (!name.trim() || !slug.trim()) return;
-    if (slugExists(slug)) { setSlugError(`"${slug}" is already taken.`); return; }
+    if (await slugExists(slug)) {
+      setSlugError(`"${slug}" is already taken.`);
+      return;
+    }
     onNext({ name, slug });
   };
 
@@ -50,17 +80,33 @@ function StepNameSlug({ onNext }) {
       <p className="cw-step-sub">Give them a name and a shareable link.</p>
       <div className="cw-field">
         <label className="cw-label">Name</label>
-        <input className="cw-input" type="text" placeholder="e.g. Ada Lovelace" value={name} onChange={handleNameChange} />
+        <input
+          className="cw-input"
+          type="text"
+          placeholder="e.g. Ada Lovelace"
+          value={name}
+          onChange={handleNameChange}
+        />
       </div>
       <div className="cw-field">
         <label className="cw-label">Your wiki URL</label>
         <div className="cw-slug-row">
           <span className="cw-slug-prefix">wikime.app/wiki/</span>
-          <input className="cw-input cw-slug-input" type="text" placeholder="ada-lovelace" value={slug} onChange={handleSlugChange} />
+          <input
+            className="cw-input cw-slug-input"
+            type="text"
+            placeholder="ada-lovelace"
+            value={slug}
+            onChange={handleSlugChange}
+          />
         </div>
         {slugError && <p className="cw-error">{slugError}</p>}
       </div>
-      <button className="cw-btn cw-btn-primary" disabled={!name.trim() || !slug.trim()} onClick={handleNext}>
+      <button
+        className="cw-btn cw-btn-primary"
+        disabled={!name.trim() || !slug.trim()}
+        onClick={handleNext}
+      >
         Continue →
       </button>
     </div>
@@ -72,13 +118,16 @@ function StepChooseMethod({ name, onAI, onManual }) {
   return (
     <div className="cw-step">
       <h2 className="cw-step-title">How do you want to build it?</h2>
-      <p className="cw-step-sub">Generating a wiki for <strong>{name}</strong></p>
+      <p className="cw-step-sub">
+        Generating a wiki for <strong>{name}</strong>
+      </p>
       <div className="cw-method-cards">
         <button className="cw-method-card cw-method-ai" onClick={onAI}>
           <span className="cw-method-icon">✦</span>
           <span className="cw-method-label">Generate with AI</span>
           <span className="cw-method-desc">
-            Answer a few questions, get a prompt to paste into any AI of your choice
+            Answer a few questions, get a prompt to paste into any AI of your
+            choice
           </span>
         </button>
         <button className="cw-method-card cw-method-manual" onClick={onManual}>
@@ -105,7 +154,8 @@ function ReferencesEditor({ references, onChange }) {
     <section className="cw-section">
       <h3 className="cw-section-title">References &amp; links</h3>
       <p className="cw-references-hint">
-        Add links to your sources, portfolio, social profiles, or anything you want to showcase.
+        Add links to your sources, portfolio, social profiles, or anything you
+        want to showcase.
       </p>
 
       {references.length === 0 && (
@@ -167,7 +217,9 @@ function StepEditor({ slug, data, onChange, onNext }) {
   return (
     <div className="cw-step cw-step-editor">
       <h2 className="cw-step-title">Edit your wiki</h2>
-      <p className="cw-step-sub">Review and tweak everything before publishing.</p>
+      <p className="cw-step-sub">
+        Review and tweak everything before publishing.
+      </p>
 
       <section className="cw-section">
         <h3 className="cw-section-title">Basic info</h3>
@@ -256,28 +308,45 @@ function StepPassword({ onSave, saving }) {
   const [error, setError] = useState("");
 
   const handleSave = () => {
-    if (password && password !== confirm) { setError("Passwords don't match."); return; }
-    if (password && password.length < 4) { setError("Password must be at least 4 characters."); return; }
+    if (password && password !== confirm) {
+      setError("Passwords don't match.");
+      return;
+    }
+    if (password && password.length < 4) {
+      setError("Password must be at least 4 characters.");
+      return;
+    }
     onSave(password || null);
   };
 
   return (
     <div className="cw-step">
       <h2 className="cw-step-title">Protect your wiki</h2>
-      <p className="cw-step-sub">Set a password to allow editing later — or skip to publish as read-only.</p>
+      <p className="cw-step-sub">
+        Set a password to allow editing later — or skip to publish as read-only.
+      </p>
       <div className="cw-password-card">
         <div className="cw-password-icon">🔒</div>
         <div className="cw-field">
-          <label className="cw-label">Password <span className="cw-optional">(optional)</span></label>
+          <label className="cw-label">
+            Password <span className="cw-optional">(optional)</span>
+          </label>
           <div className="cw-pass-row">
             <input
               className="cw-input"
               type={showPass ? "text" : "password"}
               placeholder="Choose a password…"
               value={password}
-              onChange={(e) => { setPassword(e.target.value); setError(""); }}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError("");
+              }}
             />
-            <button className="cw-show-btn" onClick={() => setShowPass(!showPass)} type="button">
+            <button
+              className="cw-show-btn"
+              onClick={() => setShowPass(!showPass)}
+              type="button"
+            >
               {showPass ? "Hide" : "Show"}
             </button>
           </div>
@@ -290,7 +359,10 @@ function StepPassword({ onSave, saving }) {
               type={showPass ? "text" : "password"}
               placeholder="Re-enter password…"
               value={confirm}
-              onChange={(e) => { setConfirm(e.target.value); setError(""); }}
+              onChange={(e) => {
+                setConfirm(e.target.value);
+                setError("");
+              }}
             />
           </div>
         )}
@@ -302,11 +374,27 @@ function StepPassword({ onSave, saving }) {
         </div>
       </div>
       <div className="cw-password-actions">
-        <button className="cw-btn cw-btn-primary cw-btn-large" onClick={handleSave} disabled={saving}>
-          {saving ? <><span className="cw-spinner" /> Publishing…</> : password ? "Publish with password →" : "Publish →"}
+        <button
+          className="cw-btn cw-btn-primary cw-btn-large"
+          onClick={handleSave}
+          disabled={saving}
+        >
+          {saving ? (
+            <>
+              <span className="cw-spinner" /> Publishing…
+            </>
+          ) : password ? (
+            "Publish with password →"
+          ) : (
+            "Publish →"
+          )}
         </button>
         {password && (
-          <button className="cw-btn cw-btn-ghost" onClick={() => onSave(null)} disabled={saving}>
+          <button
+            className="cw-btn cw-btn-ghost"
+            onClick={() => onSave(null)}
+            disabled={saving}
+          >
             Publish without password
           </button>
         )}
@@ -323,7 +411,8 @@ function StepShare({ slug, hasPassword }) {
 
   const copy = () => {
     navigator.clipboard.writeText(url).then(() => {
-      setCopied(true); setTimeout(() => setCopied(false), 2000);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     });
   };
 
@@ -332,15 +421,29 @@ function StepShare({ slug, hasPassword }) {
       <div className="cw-share-icon">🎉</div>
       <h2 className="cw-step-title">Your wiki is live!</h2>
       <p className="cw-step-sub">
-        {hasPassword ? "You can edit it anytime with your password." : "This wiki is published as read-only."}
+        {hasPassword
+          ? "You can edit it anytime with your password."
+          : "This wiki is published as read-only."}
       </p>
       <div className="cw-share-box">
         <span className="cw-share-url">{url}</span>
-        <button className="cw-btn cw-btn-copy" onClick={copy}>{copied ? "Copied!" : "Copy link"}</button>
+        <button className="cw-btn cw-btn-copy" onClick={copy}>
+          {copied ? "Copied!" : "Copy link"}
+        </button>
       </div>
       <div className="cw-share-actions">
-        <button className="cw-btn cw-btn-secondary" onClick={() => navigate(`/wiki/${slug}`)}>View my wiki</button>
-        <button className="cw-btn cw-btn-ghost" onClick={() => navigate("/create")}>Create another</button>
+        <button
+          className="cw-btn cw-btn-secondary"
+          onClick={() => navigate(`/wiki/${slug}`)}
+        >
+          View my wiki
+        </button>
+        <button
+          className="cw-btn cw-btn-ghost"
+          onClick={() => navigate("/create")}
+        >
+          Create another
+        </button>
       </div>
     </div>
   );
@@ -366,7 +469,11 @@ export default function CreateWiki() {
   };
 
   const handleWizardComplete = (parsed) => {
-    setWikiData({ ...emptyWiki, ...parsed, references: parsed.references || [] });
+    setWikiData({
+      ...emptyWiki,
+      ...parsed,
+      references: parsed.references || [],
+    });
     setShowWizard(false);
     setStep("editor");
   };
@@ -386,19 +493,42 @@ export default function CreateWiki() {
     <div className="cw-page">
       <div className="cw-progress">
         {["Who", "How", "Edit", "Lock", "Share"].map((label, i) => (
-          <div key={label} className={`cw-progress-step ${i <= stepIndex ? "cw-progress-active" : ""}`}>
+          <div
+            key={label}
+            className={`cw-progress-step ${i <= stepIndex ? "cw-progress-active" : ""}`}
+          >
             <div className="cw-progress-dot" />
             <span className="cw-progress-label">{label}</span>
           </div>
         ))}
-        <div className="cw-progress-line" style={{ width: `${(stepIndex / (STEPS.length - 1)) * 100}%` }} />
+        <div
+          className="cw-progress-line"
+          style={{ width: `${(stepIndex / (STEPS.length - 1)) * 100}%` }}
+        />
       </div>
 
-      {step === "name"     && <StepNameSlug onNext={handleNameNext} />}
-      {step === "method"   && <StepChooseMethod name={meta.name} onAI={() => setShowWizard(true)} onManual={() => setStep("editor")} />}
-      {step === "editor"   && <StepEditor slug={meta.slug} data={wikiData} onChange={setWikiData} onNext={() => setStep("password")} />}
-      {step === "password" && <StepPassword onSave={handleSave} saving={saving} />}
-      {step === "share"    && <StepShare slug={meta.slug} hasPassword={publishedWithPassword} />}
+      {step === "name" && <StepNameSlug onNext={handleNameNext} />}
+      {step === "method" && (
+        <StepChooseMethod
+          name={meta.name}
+          onAI={() => setShowWizard(true)}
+          onManual={() => setStep("editor")}
+        />
+      )}
+      {step === "editor" && (
+        <StepEditor
+          slug={meta.slug}
+          data={wikiData}
+          onChange={setWikiData}
+          onNext={() => setStep("password")}
+        />
+      )}
+      {step === "password" && (
+        <StepPassword onSave={handleSave} saving={saving} />
+      )}
+      {step === "share" && (
+        <StepShare slug={meta.slug} hasPassword={publishedWithPassword} />
+      )}
 
       {showWizard && (
         <AIPromptWizard

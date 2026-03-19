@@ -13,11 +13,15 @@ function PasswordModal({ slug, onSuccess, onCancel }) {
 
   const handleSubmit = async () => {
     if (!attempt) return;
-    setLoading(true); setError("");
+    setLoading(true);
+    setError("");
     const ok = await verifyPassword(slug, attempt);
     setLoading(false);
-    if (ok) { onSuccess(); }
-    else { setError("Incorrect password. Try again."); }
+    if (ok) {
+      onSuccess();
+    } else {
+      setError("Incorrect password. Try again.");
+    }
   };
 
   return (
@@ -25,7 +29,9 @@ function PasswordModal({ slug, onSuccess, onCancel }) {
       <div className="wp-modal">
         <div className="wp-modal-icon">🔒</div>
         <h3 className="wp-modal-title">Enter your password</h3>
-        <p className="wp-modal-sub">This wiki is password-protected. Enter your password to edit it.</p>
+        <p className="wp-modal-sub">
+          This wiki is password-protected. Enter your password to edit it.
+        </p>
         <div className="wp-modal-field">
           <div className="wp-pass-row">
             <input
@@ -33,19 +39,33 @@ function PasswordModal({ slug, onSuccess, onCancel }) {
               type={showPass ? "text" : "password"}
               placeholder="Your password…"
               value={attempt}
-              onChange={(e) => { setAttempt(e.target.value); setError(""); }}
+              onChange={(e) => {
+                setAttempt(e.target.value);
+                setError("");
+              }}
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
               autoFocus
             />
-            <button className="wp-show-btn" onClick={() => setShowPass(!showPass)}>{showPass ? "Hide" : "Show"}</button>
+            <button
+              className="wp-show-btn"
+              onClick={() => setShowPass(!showPass)}
+            >
+              {showPass ? "Hide" : "Show"}
+            </button>
           </div>
           {error && <p className="wp-modal-error">{error}</p>}
         </div>
         <div className="wp-modal-actions">
-          <button className="wp-btn" onClick={handleSubmit} disabled={!attempt || loading}>
+          <button
+            className="wp-btn"
+            onClick={handleSubmit}
+            disabled={!attempt || loading}
+          >
             {loading ? "Checking…" : "Unlock"}
           </button>
-          <button className="wp-btn wp-btn-ghost" onClick={onCancel}>Cancel</button>
+          <button className="wp-btn wp-btn-ghost" onClick={onCancel}>
+            Cancel
+          </button>
         </div>
       </div>
     </div>
@@ -63,13 +83,22 @@ export default function WikiPage() {
   const [editUnlocked, setEditUnlocked] = useState(false);
 
   useEffect(() => {
-    const data = loadWiki(slug);
-    if (data) { setWiki(data); }
-    else { setNotFound(true); }
+    const fetch = async () => {
+      const data = await loadWiki(slug);
+      if (data) {
+        setWiki(data);
+      } else {
+        setNotFound(true);
+      }
+    };
+    fetch();
   }, [slug]);
 
   const copyLink = () => {
-    navigator.clipboard.writeText(window.location.href).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
   };
 
   const handleEditClick = () => {
@@ -91,23 +120,38 @@ export default function WikiPage() {
     return (
       <div className="wp-notfound">
         <h1>Wiki not found</h1>
-        <p>No wiki exists at <strong>/wiki/{slug}</strong>.</p>
-        <p>It may have been created on a different device, or the link might be wrong.</p>
-        <button className="wp-btn" onClick={() => navigate("/create")}>Create your own wiki</button>
-        <button className="wp-btn wp-btn-ghost" onClick={() => navigate("/")}>Go home</button>
+        <p>
+          No wiki exists at <strong>/wiki/{slug}</strong>.
+        </p>
+        <p>
+          It may have been created on a different device, or the link might be
+          wrong.
+        </p>
+        <button className="wp-btn" onClick={() => navigate("/create")}>
+          Create your own wiki
+        </button>
+        <button className="wp-btn wp-btn-ghost" onClick={() => navigate("/")}>
+          Go home
+        </button>
       </div>
     );
   }
 
   if (!wiki) {
-    return <div className="wp-loading"><div className="wp-spinner" /></div>;
+    return (
+      <div className="wp-loading">
+        <div className="wp-spinner" />
+      </div>
+    );
   }
 
   return (
     <div className="wp-page">
       {/* Share / edit toolbar */}
       <div className="wp-share-bar">
-        <button className="wp-home-link" onClick={() => navigate("/")}>← WikiMe</button>
+        <button className="wp-home-link" onClick={() => navigate("/")}>
+          ← WikiMe
+        </button>
         <div className="wp-share-right">
           {/* Only show Edit if the wiki has a password */}
           {wiki.hasPassword && (
@@ -115,8 +159,12 @@ export default function WikiPage() {
               ✎ Edit
             </button>
           )}
-          <button className="wp-share-btn" onClick={copyLink}>{copied ? "✓ Copied!" : "Share this wiki"}</button>
-          <button className="wp-create-btn" onClick={() => navigate("/create")}>Create yours →</button>
+          <button className="wp-share-btn" onClick={copyLink}>
+            {copied ? "✓ Copied!" : "Share this wiki"}
+          </button>
+          <button className="wp-create-btn" onClick={() => navigate("/create")}>
+            Create yours →
+          </button>
         </div>
       </div>
 

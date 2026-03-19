@@ -1,62 +1,63 @@
-// ─── WikiMe Storage Helpers ───────────────────────────────────────────────────
-const PREFIX = "wikime:";
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
 
 async function hashPassword(password) {
   const encoder = new TextEncoder();
-  const data = encoder.encode(password + "wikime-salt");
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const data = encoder.encode(password + 'wikime-salt');
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-/** Save a wiki. Pass password string or null (no password = no editing). */
 export async function saveWiki(slug, data, password = null) {
   const passwordHash = password ? await hashPassword(password) : null;
-  const payload = {
-    ...data,
+  const row = {
     slug,
-    savedAt: new Date().toISOString(),
-    passwordHash,
-    hasPassword: !!password,
+    data: { ...data, slug },
+    password_hash: passwordHash,
+    has_password: !!password,
+    saved_at: new Date().toISOString(),
   };
-  localStorage.setItem(PREFIX + slug, JSON.stringify(payload));
-  return payload;
+  const { error } = await supabase
+    .from('wikis')
+    .upsert(row, { onConflict: 'slug' });
+  if (error) throw new Error(error.message);
+  return row;
 }
 
-/** Load a wiki by slug. Returns the object or null. */
-export function loadWiki(slug) {
-  const raw = localStorage.getItem(PREFIX + slug);
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
+export async function loadWiki(slug) {
+  const { data, error } = await supabase
+    .from('wikis')
+    .select('data, has_password, password_hash')
+    .eq('slug', slug)
+    .single();
+  if (error || !data) return null;
+  return {
+    ...data.data,
+    hasPassword: data.has_password,
+    passwordHash: data.password_hash,
+  };
 }
 
-/** Verify a password attempt against a saved wiki's hash. */
 export async function verifyPassword(slug, attempt) {
-  const wiki = loadWiki(slug);
+  const wiki = await loadWiki(slug);
   if (!wiki || !wiki.passwordHash) return false;
   const hash = await hashPassword(attempt);
   return hash === wiki.passwordHash;
 }
 
-/** Check whether a slug is already taken. */
-export function slugExists(slug) {
-  return localStorage.getItem(PREFIX + slug) !== null;
+export async function slugExists(slug) {
+  const { count } = await supabase
+    .from('wikis')
+    .select('slug', { count: 'exact', head: true })
+    .eq('slug', slug);
+  return count > 0;
 }
 
-/** List all saved wikis. */
 export function listWikis() {
-  return Object.keys(localStorage)
-    .filter((k) => k.startsWith(PREFIX))
-    .map((k) => {
-      try {
-        return JSON.parse(localStorage.getItem(k));
-      } catch {
-        return null;
-      }
-    })
-    .filter(Boolean);
+  return supabase.from('wikis').select('slug, data, saved_at');
 }

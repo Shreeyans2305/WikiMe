@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react';
-import './ImageUploader.css';
-
+import React, { useState, useRef } from "react";
+import "./ImageUploader.css";
+import { uploadImage } from "../utils/uploadImage";
 /**
  * ImageUploader
  * Props:
@@ -9,31 +9,47 @@ import './ImageUploader.css';
  *   onChange    — ({ imageUrl, imageCaption }) => void
  */
 export default function ImageUploader({ value, caption, onChange }) {
-  const [tab, setTab] = useState(value?.startsWith('data:') ? 'upload' : 'url');
-  const [urlInput, setUrlInput] = useState(value?.startsWith('data:') ? '' : (value || ''));
+  const [tab, setTab] = useState(value?.startsWith("data:") ? "upload" : "url");
+  const [urlInput, setUrlInput] = useState(
+    value?.startsWith("data:") ? "" : value || "",
+  );
   const [dragOver, setDragOver] = useState(false);
-  const [error, setError] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState("");
   const fileRef = useRef();
 
-  const emit = (imageUrl, imageCaption = caption) => onChange({ imageUrl, imageCaption });
+  const emit = (imageUrl, imageCaption = caption) =>
+    onChange({ imageUrl, imageCaption });
 
   // ── URL tab ──────────────────────────────────────────────────────────────────
   const handleUrlChange = (e) => {
     const val = e.target.value;
     setUrlInput(val);
-    setError('');
+    setError("");
     emit(val);
   };
 
   // ── Upload tab ───────────────────────────────────────────────────────────────
-  const processFile = (file) => {
+  const processFile = async (file) => {
     if (!file) return;
-    if (!file.type.startsWith('image/')) { setError('Please select an image file.'); return; }
-    if (file.size > 5 * 1024 * 1024) { setError('Image must be under 5 MB.'); return; }
-    setError('');
-    const reader = new FileReader();
-    reader.onload = (e) => emit(e.target.result);
-    reader.readAsDataURL(file);
+    if (!file.type.startsWith("image/")) {
+      setError("Please select an image file.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Image must be under 5 MB.");
+      return;
+    }
+    setError("");
+    setUploading(true);
+    try {
+      const url = await uploadImage(file);
+      emit(url);
+    } catch {
+      setError("Upload failed. Please try again.");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleFileInput = (e) => processFile(e.target.files[0]);
@@ -45,10 +61,10 @@ export default function ImageUploader({ value, caption, onChange }) {
   };
 
   const handleClear = () => {
-    setUrlInput('');
-    setError('');
-    if (fileRef.current) fileRef.current.value = '';
-    emit('');
+    setUrlInput("");
+    setError("");
+    if (fileRef.current) fileRef.current.value = "";
+    emit("");
   };
 
   // Current preview source
@@ -61,15 +77,15 @@ export default function ImageUploader({ value, caption, onChange }) {
       {/* Tab switcher */}
       <div className="iu-tabs">
         <button
-          className={`iu-tab ${tab === 'url' ? 'iu-tab-active' : ''}`}
-          onClick={() => setTab('url')}
+          className={`iu-tab ${tab === "url" ? "iu-tab-active" : ""}`}
+          onClick={() => setTab("url")}
           type="button"
         >
           Link (URL)
         </button>
         <button
-          className={`iu-tab ${tab === 'upload' ? 'iu-tab-active' : ''}`}
-          onClick={() => setTab('upload')}
+          className={`iu-tab ${tab === "upload" ? "iu-tab-active" : ""}`}
+          onClick={() => setTab("upload")}
           type="button"
         >
           Upload file
@@ -77,7 +93,7 @@ export default function ImageUploader({ value, caption, onChange }) {
       </div>
 
       {/* URL input */}
-      {tab === 'url' && (
+      {tab === "url" && (
         <input
           className="cw-input"
           type="url"
@@ -88,28 +104,37 @@ export default function ImageUploader({ value, caption, onChange }) {
       )}
 
       {/* File upload / drop zone */}
-      {tab === 'upload' && (
+      {tab === "upload" && (
         <div
-          className={`iu-dropzone ${dragOver ? 'iu-dropzone-over' : ''} ${preview && preview.startsWith('data:') ? 'iu-dropzone-has-file' : ''}`}
-          onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+          className={`iu-dropzone ${dragOver ? "iu-dropzone-over" : ""} ${preview && preview.startsWith("data:") ? "iu-dropzone-has-file" : ""}`}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragOver(true);
+          }}
           onDragLeave={() => setDragOver(false)}
           onDrop={handleDrop}
           onClick={() => fileRef.current?.click()}
         >
-          {preview && preview.startsWith('data:') ? (
+          {uploading ? (
+            <span className="iu-dropzone-label">Uploading…</span>
+          ) : preview && preview.startsWith("data:") ? (
             <span className="iu-dropzone-filename">✓ Image uploaded</span>
           ) : (
             <>
               <span className="iu-dropzone-icon">↑</span>
-              <span className="iu-dropzone-label">Drop image here or <u>browse</u></span>
-              <span className="iu-dropzone-hint">JPG, PNG, GIF, WebP · max 5 MB</span>
+              <span className="iu-dropzone-label">
+                Drop image here or <u>browse</u>
+              </span>
+              <span className="iu-dropzone-hint">
+                JPG, PNG, GIF, WebP · max 5 MB
+              </span>
             </>
           )}
           <input
             ref={fileRef}
             type="file"
             accept="image/*"
-            style={{ display: 'none' }}
+            style={{ display: "none" }}
             onChange={handleFileInput}
           />
         </div>
@@ -126,10 +151,16 @@ export default function ImageUploader({ value, caption, onChange }) {
               className="cw-input iu-caption-input"
               type="text"
               placeholder="Caption (optional)"
-              value={caption || ''}
-              onChange={(e) => onChange({ imageUrl: value, imageCaption: e.target.value })}
+              value={caption || ""}
+              onChange={(e) =>
+                onChange({ imageUrl: value, imageCaption: e.target.value })
+              }
             />
-            <button className="iu-clear-btn" onClick={handleClear} type="button">
+            <button
+              className="iu-clear-btn"
+              onClick={handleClear}
+              type="button"
+            >
               Remove photo
             </button>
           </div>

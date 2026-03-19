@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { loadWiki, saveWiki, verifyPassword } from "../utils/wikiStorage";
+import { createClient } from "@supabase/supabase-js";
+import { loadWiki, verifyPassword } from "../utils/wikiStorage";
 import ImageUploader from "../componenets/Imageuploader";
 import "./CreateWiki.css";
 import "./EditWiki.css";
 
-// ─── Password gate (shown on direct /edit/:slug navigation) ───────────────────
+// Single shared supabase instance — not re-created on every save
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
+
+// ─── Password gate ────────────────────────────────────────────────────────────
 function PasswordGate({ slug, onUnlock }) {
   const [attempt, setAttempt] = useState("");
   const [error, setError] = useState("");
@@ -44,7 +51,11 @@ function PasswordGate({ slug, onUnlock }) {
               onChange={(e) => { setAttempt(e.target.value); setError(""); }}
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
             />
-            <button className="cw-show-btn" onClick={() => setShowPass(!showPass)} type="button">
+            <button
+              className="cw-show-btn"
+              onClick={() => setShowPass(!showPass)}
+              type="button"
+            >
               {showPass ? "Hide" : "Show"}
             </button>
           </div>
@@ -71,7 +82,7 @@ function PasswordGate({ slug, onUnlock }) {
   );
 }
 
-// ─── Editor form (same fields as CreateWiki's StepEditor) ─────────────────────
+// ─── Editor form ──────────────────────────────────────────────────────────────
 function Editor({ slug, data, onChange, onSave, saving }) {
   const update = (key, val) => onChange({ ...data, [key]: val });
   const updateSection = (key, val) =>
@@ -100,7 +111,8 @@ function Editor({ slug, data, onChange, onSave, saving }) {
     <div className="cw-step cw-step-editor">
       <h2 className="cw-step-title">Edit wiki</h2>
       <p className="cw-step-sub">
-        Editing <strong>{data.name}</strong> · <span className="ew-slug">wikime.app/wiki/{slug}</span>
+        Editing <strong>{data.name}</strong> ·{" "}
+        <span className="ew-slug">wikime.app/wiki/{slug}</span>
       </p>
 
       <section className="cw-section">
@@ -121,7 +133,9 @@ function Editor({ slug, data, onChange, onSave, saving }) {
         <ImageUploader
           value={data.imageUrl}
           caption={data.imageCaption}
-          onChange={({ imageUrl, imageCaption }) => onChange({ ...data, imageUrl, imageCaption })}
+          onChange={({ imageUrl, imageCaption }) =>
+            onChange({ ...data, imageUrl, imageCaption })
+          }
         />
       </section>
 
@@ -171,7 +185,7 @@ function Editor({ slug, data, onChange, onSave, saving }) {
   );
 }
 
-// ─── Saved confirmation ───────────────────────────────────────────────────────
+// ─── Saved banner ─────────────────────────────────────────────────────────────
 function SavedBanner({ slug, onDismiss }) {
   const navigate = useNavigate();
   return (
@@ -192,71 +206,108 @@ export default function EditWiki() {
 
   const [wiki, setWiki] = useState(null);
   const [wikiData, setWikiData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState("");
 
-  // Load wiki on mount
   useEffect(() => {
-    const data = loadWiki(slug);
-    if (!data) { setNotFound(true); return; }
-    setWiki(data);
-    setWikiData(data);
-    // If the wiki has no password, it can't be edited — redirect
-    if (!data.hasPassword) {
-      navigate(`/wiki/${slug}`, { replace: true });
-    }
+    const load = async () => {
+      const data = await loadWiki(slug);
+      setLoading(false);
+      if (!data) {
+        setNotFound(true);
+        return;
+      }
+      setWiki(data);
+      setWikiData(data);
+      if (!data.hasPassword) {
+        navigate(`/wiki/${slug}`, { replace: true });
+      }
+    };
+    load();
   }, [slug]);
 
   const handleSave = async () => {
     setSaving(true);
-    // Preserve the existing passwordHash and hasPassword when re-saving
-    await saveWiki(slug, wikiData, null);
-    // saveWiki with null password would clear the hash — we need to preserve it.
-    // So we patch the stored object directly after saving:
-    const stored = JSON.parse(localStorage.getItem(`wikime:${slug}`));
-    stored.passwordHash = wiki.passwordHash;
-    stored.hasPassword = true;
-    stored.lastEdited = new Date().toLocaleDateString("en-US", {
-      month: "long", day: "numeric", year: "numeric",
-    });
-    localStorage.setItem(`wikime:${slug}`, JSON.stringify(stored));
-    setSaving(false);
-    setSaved(true);
+    setSaveError("");
+    try {
+      const updatedData = {
+        ...wikiData,
+        lastEdited: new Date().toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        }),
+      };
+
+      const { error } = await supabase.from("wikis").upsert(
+        {
+          slug,
+          data: { ...updatedData, slug },
+          password_hash: wiki.passwordHash,
+          has_password: true,
+          saved_at: new Date().toISOString(),
+        },
+        { onConflict: "slug" }
+      );
+
+      if (error) throw new Error(error.message);
+      setWikiData(updatedData);
+      setSaved(true);
+      navigate(`/wiki/${slug}`);
+    } catch (e) {
+      console.error("Save failed:", e);
+      setSaveError("Save failed — please try again.");
+    } finally {
+      setSaving(false);
+    }
   };
 
+  // Still loading from Supabase
+  if (loading) {
+    return (
+      <div className="ew-loading">
+        <div className="cw-spinner" style={{ borderTopColor: "#555", borderColor: "#eee" }} />
+      </div>
+    );
+  }
+
+  // Slug not found in Supabase
   if (notFound) {
     return (
       <div className="ew-gate">
         <div className="ew-gate-card">
           <h2 className="cw-step-title">Wiki not found</h2>
           <p className="cw-step-sub">No wiki exists at /wiki/{slug}.</p>
-          <button className="cw-btn cw-btn-primary" onClick={() => navigate("/")}>Go home</button>
+          <button className="cw-btn cw-btn-primary" onClick={() => navigate("/")}>
+            Go home
+          </button>
         </div>
       </div>
     );
   }
 
-  if (!wiki) {
-    return <div className="ew-loading"><div className="cw-spinner" style={{ borderTopColor: "#555", borderColor: "#eee" }} /></div>;
-  }
-
-  // Show password gate if not yet unlocked
+  // Password gate
   if (!unlocked) {
     return <PasswordGate slug={slug} onUnlock={() => setUnlocked(true)} />;
   }
 
   return (
     <div className="cw-page">
-      {/* Top nav */}
       <div className="ew-topbar">
-        <button className="cw-btn cw-btn-ghost" onClick={() => navigate(`/wiki/${slug}`)}>
+        <button
+          className="cw-btn cw-btn-ghost"
+          onClick={() => navigate(`/wiki/${slug}`)}
+        >
           ← Back to wiki
         </button>
       </div>
 
       {saved && <SavedBanner slug={slug} onDismiss={() => setSaved(false)} />}
+      {saveError && <p className="cw-ai-error">{saveError}</p>}
 
       <Editor
         slug={slug}
