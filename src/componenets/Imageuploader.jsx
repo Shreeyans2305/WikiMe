@@ -1,13 +1,7 @@
 import React, { useState, useRef } from "react";
 import "./Imageuploader.css";
 import { uploadImage } from "../utils/uploadImage";
-/**
- * ImageUploader
- * Props:
- *   value       — current imageUrl (URL string or base64 data URI)
- *   caption     — current imageCaption string
- *   onChange    — ({ imageUrl, imageCaption }) => void
- */
+
 export default function ImageUploader({ value, caption, onChange }) {
   const [tab, setTab] = useState(value?.startsWith("data:") ? "upload" : "url");
   const [urlInput, setUrlInput] = useState(
@@ -21,7 +15,6 @@ export default function ImageUploader({ value, caption, onChange }) {
   const emit = (imageUrl, imageCaption = caption) =>
     onChange({ imageUrl, imageCaption });
 
-  // ── URL tab ──────────────────────────────────────────────────────────────────
   const handleUrlChange = (e) => {
     const val = e.target.value;
     setUrlInput(val);
@@ -29,7 +22,6 @@ export default function ImageUploader({ value, caption, onChange }) {
     emit(val);
   };
 
-  // ── Upload tab ───────────────────────────────────────────────────────────────
   const processFile = async (file) => {
     if (!file) return;
     if (!file.type.startsWith("image/")) {
@@ -67,14 +59,12 @@ export default function ImageUploader({ value, caption, onChange }) {
     emit("");
   };
 
-  // Current preview source
   const preview = value || null;
 
   return (
     <div className="iu-root">
       <label className="cw-label">Photo</label>
 
-      {/* Tab switcher */}
       <div className="iu-tabs">
         <button
           className={`iu-tab ${tab === "url" ? "iu-tab-active" : ""}`}
@@ -92,7 +82,6 @@ export default function ImageUploader({ value, caption, onChange }) {
         </button>
       </div>
 
-      {/* URL input */}
       {tab === "url" && (
         <input
           className="cw-input"
@@ -103,7 +92,6 @@ export default function ImageUploader({ value, caption, onChange }) {
         />
       )}
 
-      {/* File upload / drop zone */}
       {tab === "upload" && (
         <div
           className={`iu-dropzone ${dragOver ? "iu-dropzone-over" : ""} ${preview && preview.startsWith("data:") ? "iu-dropzone-has-file" : ""}`}
@@ -142,7 +130,6 @@ export default function ImageUploader({ value, caption, onChange }) {
 
       {error && <p className="cw-error">{error}</p>}
 
-      {/* Preview + caption */}
       {preview && (
         <div className="iu-preview-row">
           <img src={preview} alt="Preview" className="iu-preview-img" />

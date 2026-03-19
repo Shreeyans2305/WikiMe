@@ -52,7 +52,6 @@ function Disclaimer() {
 }
 
 function InfoBox({ data }) {
-  // imageUrl can be a remote URL or a base64 data URI from an upload
   const imageSrc = data.imageUrl || null;
 
   return (
@@ -189,10 +188,8 @@ const WikiTemplate = ({ data: propData }) => {
 
   return (
     <div style={styles.pageWrapper}>
-      {/* ── Disclaimer (only on user-generated wikis) ── */}
       {isUserGenerated && <Disclaimer />}
 
-      {/* ── Header ── */}
       <header style={styles.pageHeader}>
         <h1 style={styles.pageTitle}>
           <span style={styles.pageTitleMain}>{d.name}</span>
@@ -202,7 +199,6 @@ const WikiTemplate = ({ data: propData }) => {
         </div>
       </header>
 
-      {/* ── Body ── */}
       <div style={styles.bodyContent}>
         <div style={styles.leadSection}>
           <InfoBox data={d} />

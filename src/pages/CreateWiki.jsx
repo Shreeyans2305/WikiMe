@@ -36,7 +36,6 @@ const emptyWiki = {
   }),
 };
 
-// ─── Step 1: Name + Slug ──────────────────────────────────────────────────────
 function StepNameSlug({ onNext }) {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
@@ -113,7 +112,6 @@ function StepNameSlug({ onNext }) {
   );
 }
 
-// ─── Step 2: Method ───────────────────────────────────────────────────────────
 function StepChooseMethod({ name, onAI, onManual }) {
   return (
     <div className="cw-step">
@@ -140,7 +138,6 @@ function StepChooseMethod({ name, onAI, onManual }) {
   );
 }
 
-// ─── References editor ────────────────────────────────────────────────────────
 function ReferencesEditor({ references, onChange }) {
   const add = () =>
     onChange([...references, { id: Date.now(), label: "", url: "" }]);
@@ -199,7 +196,6 @@ function ReferencesEditor({ references, onChange }) {
   );
 }
 
-// ─── Step 3: Editor ───────────────────────────────────────────────────────────
 function StepEditor({ slug, data, onChange, onNext }) {
   const update = (key, val) => onChange({ ...data, [key]: val });
   const updateSection = (key, val) =>
@@ -300,7 +296,6 @@ function StepEditor({ slug, data, onChange, onNext }) {
   );
 }
 
-// ─── Step 4: Password ─────────────────────────────────────────────────────────
 function StepPassword({ onSave, saving }) {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -403,7 +398,6 @@ function StepPassword({ onSave, saving }) {
   );
 }
 
-// ─── Step 5: Share ────────────────────────────────────────────────────────────
 function StepShare({ slug, hasPassword }) {
   const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
@@ -449,7 +443,6 @@ function StepShare({ slug, hasPassword }) {
   );
 }
 
-// ─── Main ─────────────────────────────────────────────────────────────────────
 const STEPS = ["name", "method", "editor", "password", "share"];
 
 export default function CreateWiki() {

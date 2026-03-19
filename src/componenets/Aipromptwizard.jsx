@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Aipromptwizard.css";
 
-// ─── Questions the wizard asks ────────────────────────────────────────────────
 const QUESTIONS = [
   {
     id: "who",
@@ -47,7 +46,6 @@ const QUESTIONS = [
   },
 ];
 
-// ─── Build the prompt from answers ───────────────────────────────────────────
 function buildPrompt(name, answers) {
   const toneMap = {
     encyclopedic: "neutral and encyclopedic, like Wikipedia",
@@ -98,13 +96,11 @@ Return ONLY a valid JSON object — no markdown, no backticks, no explanation be
 Fill every string field with content — never leave them null. If a field genuinely doesn't apply, use an empty string "".`;
 }
 
-// ─── Parse pasted JSON output ─────────────────────────────────────────────────
 function parseAIOutput(raw) {
   const clean = raw.replace(/```json|```/g, "").trim();
   return JSON.parse(clean);
 }
 
-// ─── Animated step indicator ──────────────────────────────────────────────────
 function StepDots({ total, current }) {
   return (
     <div className="apw-dots">
@@ -183,7 +179,6 @@ export default function AIPromptWizard({ name, onComplete, onClose }) {
     }
   };
 
-  // ── Copy prompt ─────────────────────────────────────────────────────────────
   const copyPrompt = () => {
     navigator.clipboard.writeText(prompt).then(() => {
       setCopied(true);
@@ -191,7 +186,6 @@ export default function AIPromptWizard({ name, onComplete, onClose }) {
     });
   };
 
-  // ── Parse pasted output ─────────────────────────────────────────────────────
   const handlePaste = () => {
     setParseError("");
     try {
@@ -202,15 +196,12 @@ export default function AIPromptWizard({ name, onComplete, onClose }) {
     }
   };
 
-  // ─────────────────────────────────────────────────────────────────────────────
   return (
     <div className="apw-backdrop" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className={`apw-modal ${animating ? "apw-modal-exit" : "apw-modal-enter"}`}>
 
-        {/* Close button */}
         <button className="apw-close" onClick={onClose}>✕</button>
 
-        {/* ── Phase: Questions ── */}
         {phase === "questions" && (
           <div className="apw-phase">
             <div className="apw-eyebrow">Step {questionIndex + 1} of {QUESTIONS.length}</div>
@@ -261,13 +252,12 @@ export default function AIPromptWizard({ name, onComplete, onClose }) {
           </div>
         )}
 
-        {/* ── Phase: Show prompt ── */}
         {phase === "prompt" && (
           <div className="apw-phase">
             <div className="apw-eyebrow">Your AI prompt is ready</div>
             <h2 className="apw-question">Copy this into any AI</h2>
             <p className="apw-hint">
-              Paste it into ChatGPT, Claude, Gemini, or any AI chat. Then copy the entire response and paste it back here.
+              Paste it into ChatGPT, Claude, Gemini, or any AI chat. Then copy the entire response <b>**as it is**</b> and paste it back here.
             </p>
 
             <div className="apw-prompt-box">

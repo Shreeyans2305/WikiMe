@@ -6,13 +6,11 @@ import ImageUploader from "../componenets/Imageuploader";
 import "./CreateWiki.css";
 import "./EditWiki.css";
 
-// Single shared supabase instance — not re-created on every save
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_SUPABASE_ANON_KEY
 );
 
-// ─── Password gate ────────────────────────────────────────────────────────────
 function PasswordGate({ slug, onUnlock }) {
   const [attempt, setAttempt] = useState("");
   const [error, setError] = useState("");
@@ -82,7 +80,6 @@ function PasswordGate({ slug, onUnlock }) {
   );
 }
 
-// ─── Editor form ──────────────────────────────────────────────────────────────
 function Editor({ slug, data, onChange, onSave, saving }) {
   const update = (key, val) => onChange({ ...data, [key]: val });
   const updateSection = (key, val) =>
@@ -185,7 +182,6 @@ function Editor({ slug, data, onChange, onSave, saving }) {
   );
 }
 
-// ─── Saved banner ─────────────────────────────────────────────────────────────
 function SavedBanner({ slug, onDismiss }) {
   const navigate = useNavigate();
   return (
@@ -199,7 +195,6 @@ function SavedBanner({ slug, onDismiss }) {
   );
 }
 
-// ─── Main EditWiki page ───────────────────────────────────────────────────────
 export default function EditWiki() {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -266,7 +261,6 @@ export default function EditWiki() {
     }
   };
 
-  // Still loading from Supabase
   if (loading) {
     return (
       <div className="ew-loading">
@@ -275,7 +269,6 @@ export default function EditWiki() {
     );
   }
 
-  // Slug not found in Supabase
   if (notFound) {
     return (
       <div className="ew-gate">

@@ -1,6 +1,5 @@
 import React from 'react';
 
-// Sample preview data for the homepage cards
 const PREVIEW_DATA = [
   {
     name: 'Grandma',
@@ -53,7 +52,6 @@ const WikiPreviewCard = ({ index = 0 }) => {
 
   return (
     <div style={s.card}>
-      {/* Header: name/subtitle left, photo right */}
       <div style={s.header}>
         <div style={s.headerLeft}>
           <div style={s.name}>{d.name}</div>

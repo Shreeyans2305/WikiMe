@@ -147,13 +147,11 @@ export default function WikiPage() {
 
   return (
     <div className="wp-page">
-      {/* Share / edit toolbar */}
       <div className="wp-share-bar">
         <button className="wp-home-link" onClick={() => navigate("/")}>
           ← WikiMe
         </button>
         <div className="wp-share-right">
-          {/* Only show Edit if the wiki has a password */}
           {wiki.hasPassword && (
             <button className="wp-edit-btn" onClick={handleEditClick}>
               ✎ Edit
@@ -168,7 +166,6 @@ export default function WikiPage() {
         </div>
       </div>
 
-      {/* Password modal */}
       {showPasswordModal && (
         <PasswordModal
           slug={slug}
@@ -177,7 +174,6 @@ export default function WikiPage() {
         />
       )}
 
-      {/* Wiki content */}
       <WikiTemplate data={wiki} />
     </div>
   );

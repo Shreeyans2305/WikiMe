@@ -31,7 +31,6 @@ export const Home = () => {
     <>
     <h1 className='heading'>WikiMe</h1>
     <div className="home-root">
-      {/* ── Left: text + CTA ── */}
 
       <div className="home-left">
         <div className="home-eyebrow">Free · Instant · Yours</div>
@@ -52,7 +51,6 @@ export const Home = () => {
           <span className="home-hint">No account needed</span>
         </div>
 
-        {/* Wikipedia-style stats strip */}
         <div className="home-stats">
           <div className="home-stat">
             <span className="home-stat-num">AI</span>
@@ -71,7 +69,6 @@ export const Home = () => {
         </div>
       </div>
 
-      {/* ── Right: animated cards ── */}
       <div className="home-right" style={{ width: cardSize.width, height: cardSize.height }}>
         <CardSwap
           width={cardSize.width}
