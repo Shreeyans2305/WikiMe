@@ -1,0 +1,28 @@
+h1{
+    font-size: 5rem;
+    color: #333;
+    text-align: center;
+    margin-top: 50px;
+}
+h2{
+    font-size: 2rem;
+    color: #000000;
+    text-align: left;
+    margin-top: 100px;
+    padding-left: 90px;
+}
+/* Global resets — page-level h1/h2 styles are now owned by each page */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Only apply these if NOT inside a page that owns its own headings */
+h1, h2 {
+  margin: 0;
+  padding: 0;
+}

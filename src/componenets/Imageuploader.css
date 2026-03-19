@@ -1,0 +1,137 @@
+/* ─── ImageUploader ───────────────────────────────────────────────────────────── */
+
+.iu-root {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+/* ── Tabs ── */
+.iu-tabs {
+  display: flex;
+  gap: 0;
+  border: 1px solid #e2ddd6;
+  border-radius: 8px;
+  overflow: hidden;
+  width: fit-content;
+}
+
+.iu-tab {
+  padding: 7px 18px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  transition: background 0.15s, color 0.15s;
+}
+
+.iu-tab + .iu-tab {
+  border-left: 1px solid #e2ddd6;
+}
+
+.iu-tab-active {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+/* ── Drop zone ── */
+.iu-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 2px dashed #d6d0c4;
+  border-radius: 8px;
+  padding: 28px 20px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  background: #faf9f7;
+  text-align: center;
+}
+
+.iu-dropzone:hover,
+.iu-dropzone-over {
+  border-color: #1a1a1a;
+  background: #f3f0eb;
+}
+
+.iu-dropzone-has-file {
+  border-style: solid;
+  border-color: #b6dfc4;
+  background: #eaf5ee;
+}
+
+.iu-dropzone-icon {
+  font-size: 1.6rem;
+  color: #bbb;
+  line-height: 1;
+}
+
+.iu-dropzone-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  color: #555;
+}
+
+.iu-dropzone-hint {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  color: #aaa;
+}
+
+.iu-dropzone-filename {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  color: #2d6a4f;
+  font-weight: 500;
+}
+
+/* ── Preview ── */
+.iu-preview-row {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-top: 4px;
+}
+
+.iu-preview-img {
+  width: 72px;
+  height: 88px;
+  object-fit: cover;
+  object-position: top;
+  border: 1px solid #a2a9b1;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.iu-preview-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.iu-caption-input {
+  margin-bottom: 0 !important;
+}
+
+.iu-clear-btn {
+  background: none;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: #c0392b;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+  text-decoration: underline;
+}
+
+.iu-clear-btn:hover {
+  color: #922b21;
+}

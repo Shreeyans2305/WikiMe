@@ -1,0 +1,282 @@
+/* ─── AIPromptWizard ─────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap');
+
+/* Backdrop */
+.apw-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 10, 0.55);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 24px;
+  animation: apw-fade-in 0.2s ease;
+}
+
+@keyframes apw-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Modal */
+.apw-modal {
+  background: #fff;
+  border-radius: 18px;
+  width: 100%;
+  max-width: 540px;
+  padding: 40px 40px 32px;
+  position: relative;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.22);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.apw-modal-enter {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.apw-modal-exit {
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+}
+
+/* Close */
+.apw-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #bbb;
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px;
+  transition: color 0.15s;
+}
+.apw-close:hover { color: #555; }
+
+/* Phase wrapper */
+.apw-phase {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: apw-slide-up 0.28s ease;
+}
+
+@keyframes apw-slide-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Eyebrow */
+.apw-eyebrow {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #aaa;
+}
+
+/* Step dots */
+.apw-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.apw-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ddd;
+  transition: all 0.25s;
+}
+
+.apw-dot-active {
+  background: #1a1a1a;
+  width: 20px;
+  border-radius: 3px;
+}
+
+.apw-dot-done {
+  background: #aaa;
+}
+
+/* Question */
+.apw-question {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+  line-height: 1.25;
+}
+
+/* Hint */
+.apw-hint {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.875rem;
+  color: #888;
+  margin: 0;
+  line-height: 1.55;
+}
+
+/* Textarea */
+.apw-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  color: #1a1a1a;
+  background: #faf9f7;
+  border: 1px solid #e2ddd6;
+  border-radius: 10px;
+  outline: none;
+  resize: vertical;
+  line-height: 1.6;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+.apw-textarea:focus { border-color: #1a1a1a; background: #fff; }
+
+.apw-paste-area {
+  font-family: 'Courier New', monospace;
+  font-size: 0.82rem;
+  min-height: 160px;
+}
+
+/* Choices */
+.apw-choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.apw-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 14px 16px;
+  background: #faf9f7;
+  border: 2px solid #e2ddd6;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.15s;
+}
+
+.apw-choice:hover {
+  border-color: #aaa;
+  background: #f3f0eb;
+}
+
+.apw-choice-active {
+  border-color: #1a1a1a;
+  background: #1a1a1a;
+}
+
+.apw-choice-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.apw-choice-active .apw-choice-label {
+  color: #fff;
+}
+
+.apw-choice-desc {
+  font-size: 0.78rem;
+  color: #888;
+  line-height: 1.35;
+}
+
+.apw-choice-active .apw-choice-desc {
+  color: rgba(255,255,255,0.65);
+}
+
+/* Prompt box */
+.apw-prompt-box {
+  background: #f4f2ee;
+  border: 1px solid #ddd8cf;
+  border-radius: 10px;
+  padding: 16px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.apw-prompt-text {
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  color: #444;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Error */
+.apw-error {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.84rem;
+  color: #c0392b;
+  margin: 0;
+}
+
+/* Nav row */
+.apw-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.apw-btn-primary {
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 11px 22px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  margin-left: auto;
+}
+.apw-btn-primary:hover:not(:disabled) { background: #333; transform: translateY(-1px); }
+.apw-btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.apw-btn-ghost {
+  background: none;
+  border: none;
+  color: #999;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.15s;
+}
+.apw-btn-ghost:hover { color: #333; }
+
+.apw-btn-copy {
+  background: #fff;
+  border: 1px solid #d6d0c4;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: #333;
+}
+.apw-btn-copy:hover { border-color: #1a1a1a; }

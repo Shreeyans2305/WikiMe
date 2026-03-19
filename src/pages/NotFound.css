@@ -1,0 +1,84 @@
+/* ─── NotFound page ───────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+/* Root: full viewport, stack glitch + overlay */
+.nf-root {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Glitch fills every pixel */
+.nf-glitch-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Overlay centered on top */
+.nf-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+  padding: 40px 24px;
+  pointer-events: none;
+}
+
+.nf-eyebrow {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(97, 220, 163, 0.7);
+  margin: 0;
+}
+
+.nf-heading {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2rem, 6vw, 3.6rem);
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  line-height: 1.15;
+  text-shadow: 0 2px 24px rgba(0,0,0,0.6);
+}
+
+.nf-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.69);
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+/* Button needs pointer-events re-enabled */
+.nf-btn {
+  pointer-events: all;
+  margin-top: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #1a1a1a;
+  background: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 26px;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.nf-btn:hover {
+  background: #f0f0f0;
+  transform: translateY(-1px);
+}

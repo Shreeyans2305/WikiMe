@@ -1,0 +1,551 @@
+/* ─── CreateWiki page styles ─────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap');
+
+.cw-page {
+  min-height: 100vh;
+  background: #f7f5f0;
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 24px 120px;
+}
+
+/* ─── Progress bar ─── */
+.cw-progress {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: relative;
+  margin-bottom: 56px;
+  width: 100%;
+  max-width: 480px;
+}
+
+.cw-progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.cw-progress-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #d6d0c4;
+  border: 2px solid #c8c0b2;
+  transition: all 0.3s;
+}
+
+.cw-progress-active .cw-progress-dot {
+  background: #2c2c2c;
+  border-color: #2c2c2c;
+}
+
+.cw-progress-label {
+  font-size: 11px;
+  color: #999;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.cw-progress-active .cw-progress-label {
+  color: #2c2c2c;
+}
+
+.cw-progress-line {
+  position: absolute;
+  top: 5px;
+  left: 0;
+  height: 2px;
+  background: #2c2c2c;
+  transition: width 0.4s ease;
+  z-index: 0;
+}
+
+/* ─── Step container ─── */
+.cw-step {
+  width: 100%;
+  max-width: 560px;
+  animation: cw-fadein 0.3s ease;
+}
+
+@keyframes cw-fadein {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cw-step-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 6px;
+}
+
+.cw-step-sub {
+  font-size: 0.95rem;
+  color: #777;
+  margin: 0 0 36px;
+}
+
+/* ─── Form elements ─── */
+.cw-field {
+  margin-bottom: 24px;
+}
+
+.cw-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+.cw-input {
+  width: 100%;
+  padding: 12px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  color: #1a1a1a;
+  background: #fff;
+  border: 1px solid #e2ddd6;
+  border-radius: 8px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.cw-input:focus {
+  border-color: #2c2c2c;
+}
+
+.cw-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  color: #1a1a1a;
+  background: #fff;
+  border: 1px solid #e2ddd6;
+  border-radius: 8px;
+  outline: none;
+  box-sizing: border-box;
+  resize: vertical;
+  line-height: 1.6;
+  transition: border-color 0.2s;
+}
+
+.cw-textarea:focus {
+  border-color: #2c2c2c;
+}
+
+.cw-slug-row {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #e2ddd6;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.cw-slug-row:focus-within {
+  border-color: #2c2c2c;
+}
+
+.cw-slug-prefix {
+  padding: 12px 0 12px 16px;
+  font-size: 0.9rem;
+  color: #aaa;
+  white-space: nowrap;
+}
+
+.cw-slug-input {
+  border: none !important;
+  border-radius: 0 !important;
+  padding-left: 4px;
+  flex: 1;
+}
+
+.cw-error {
+  font-size: 0.85rem;
+  color: #c0392b;
+  margin: 6px 0 0;
+}
+
+/* ─── Buttons ─── */
+.cw-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  transition: all 0.2s;
+}
+
+.cw-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cw-btn-primary {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.cw-btn-primary:hover:not(:disabled) {
+  background: #333;
+  transform: translateY(-1px);
+}
+
+.cw-btn-large {
+  padding: 16px 36px;
+  font-size: 1rem;
+}
+
+.cw-btn-secondary {
+  background: #fff;
+  color: #1a1a1a;
+  border: 1px solid #d6d0c4;
+}
+
+.cw-btn-secondary:hover {
+  border-color: #1a1a1a;
+}
+
+.cw-btn-ghost {
+  background: transparent;
+  color: #888;
+}
+
+.cw-btn-ghost:hover {
+  color: #1a1a1a;
+}
+
+.cw-btn-copy {
+  background: #1a1a1a;
+  color: #fff;
+  white-space: nowrap;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-size: 0.9rem;
+}
+
+/* ─── Method cards ─── */
+.cw-method-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.cw-method-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 28px 24px;
+  border-radius: 12px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  text-align: left;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s;
+}
+
+.cw-method-ai {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.cw-method-ai:hover:not(:disabled) {
+  background: #333;
+  transform: translateY(-2px);
+}
+
+.cw-method-manual {
+  background: #fff;
+  color: #1a1a1a;
+  border-color: #e2ddd6;
+}
+
+.cw-method-manual:hover:not(:disabled) {
+  border-color: #1a1a1a;
+  transform: translateY(-2px);
+}
+
+.cw-method-icon {
+  font-size: 1.4rem;
+}
+
+.cw-method-label {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.cw-method-desc {
+  font-size: 0.82rem;
+  opacity: 0.65;
+  line-height: 1.4;
+}
+
+/* ─── Spinner ─── */
+.cw-spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: cw-spin 0.7s linear infinite;
+}
+
+@keyframes cw-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Editor ─── */
+.cw-step-editor {
+  max-width: 680px;
+}
+
+.cw-section {
+  margin-bottom: 36px;
+}
+
+.cw-section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e2ddd6;
+}
+
+.cw-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 20px;
+}
+
+.cw-editor-footer {
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(to top, #f7f5f0 80%, transparent);
+  padding: 24px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.cw-slug-preview {
+  font-size: 0.88rem;
+  color: #888;
+  margin: 0;
+}
+
+/* ─── Share ─── */
+.cw-step-share {
+  text-align: center;
+  max-width: 480px;
+}
+
+.cw-share-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+
+.cw-share-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid #e2ddd6;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin: 28px 0;
+}
+
+.cw-share-url {
+  flex: 1;
+  font-size: 0.88rem;
+  color: #555;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.cw-share-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.cw-ai-error {
+  color: #c0392b;
+  font-size: 0.88rem;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+/* ─── Password step ──────────────────────────────────────────────────────────── */
+
+.cw-password-card {
+  background: #fff;
+  border: 1px solid #e2ddd6;
+  border-radius: 12px;
+  padding: 28px 24px 20px;
+  margin-bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cw-password-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.cw-optional {
+  color: #bbb;
+  font-weight: 400;
+  font-size: 11px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.cw-pass-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.cw-pass-row .cw-input {
+  flex: 1;
+}
+
+.cw-show-btn {
+  background: #f3f0eb;
+  border: 1px solid #e2ddd6;
+  border-radius: 8px;
+  padding: 0 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: #666;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.cw-show-btn:hover { background: #ede9e2; }
+
+.cw-password-notice {
+  font-size: 0.82rem;
+  color: #888;
+  line-height: 1.5;
+  padding: 10px 14px;
+  background: #f7f5f0;
+  border-radius: 6px;
+}
+
+.cw-password-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+/* ─── References editor ───────────────────────────────────────────────────── */
+
+.cw-references-hint {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.84rem;
+  color: #999;
+  margin: -12px 0 16px;
+  line-height: 1.5;
+}
+
+.cw-references-empty {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  color: #bbb;
+  padding: 12px 0;
+}
+
+.cw-references-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.cw-reference-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.cw-reference-num {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  color: #aaa;
+  font-weight: 500;
+  min-width: 18px;
+  padding-top: 13px;
+  text-align: right;
+}
+
+.cw-reference-fields {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cw-ref-label { font-size: 0.9rem; }
+.cw-ref-url   { font-size: 0.85rem; color: #555; }
+
+.cw-reference-remove {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 10px 4px 0;
+  line-height: 1;
+  transition: color 0.15s;
+}
+.cw-reference-remove:hover { color: #c0392b; }
+
+.cw-btn-add-ref {
+  background: #faf9f7;
+  border: 1px dashed #d6d0c4;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.15s;
+  width: 100%;
+  text-align: left;
+}
+.cw-btn-add-ref:hover {
+  border-color: #1a1a1a;
+  color: #1a1a1a;
+  background: #f3f0eb;
+}
