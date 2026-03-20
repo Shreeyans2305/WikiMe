@@ -527,6 +527,10 @@ export default function CreateWiki() {
         <AIPromptWizard
           name={meta.name}
           onComplete={handleWizardComplete}
+          onApiComplete={(parsed) => {
+            handleWizardComplete(parsed);
+            setShowWizard(false);
+          }}
           onClose={() => setShowWizard(false)}
         />
       )}

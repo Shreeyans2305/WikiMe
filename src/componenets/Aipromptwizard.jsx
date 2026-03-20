@@ -21,7 +21,8 @@ const QUESTIONS = [
     id: "details",
     question: () => "Any key facts to include?",
     hint: "Born, nationality, education, dates, family — anything relevant",
-    placeholder: "e.g. Born 1955 in San Francisco, studied at MIT, married with two kids…",
+    placeholder:
+      "e.g. Born 1955 in San Francisco, studied at MIT, married with two kids…",
     type: "textarea",
   },
   {
@@ -31,10 +32,22 @@ const QUESTIONS = [
     placeholder: "",
     type: "choice",
     choices: [
-      { value: "encyclopedic", label: "Encyclopedic", desc: "Formal, neutral, Wikipedia-style" },
-      { value: "celebratory", label: "Celebratory", desc: "Warm, proud, highlights achievements" },
+      {
+        value: "encyclopedic",
+        label: "Encyclopedic",
+        desc: "Formal, neutral, Wikipedia-style",
+      },
+      {
+        value: "celebratory",
+        label: "Celebratory",
+        desc: "Warm, proud, highlights achievements",
+      },
       { value: "playful", label: "Playful", desc: "Fun, witty, light-hearted" },
-      { value: "dramatic", label: "Dramatic", desc: "Epic, cinematic, larger than life" },
+      {
+        value: "dramatic",
+        label: "Dramatic",
+        desc: "Epic, cinematic, larger than life",
+      },
     ],
   },
   {
@@ -116,7 +129,12 @@ function StepDots({ total, current }) {
 }
 
 // ─── Main wizard component ────────────────────────────────────────────────────
-export default function AIPromptWizard({ name, onComplete, onApiComplete, onClose }) {
+export default function AIPromptWizard({
+  name,
+  onComplete,
+  onApiComplete,
+  onClose,
+}) {
   const [phase, setPhase] = useState("questions");
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState("");
@@ -155,13 +173,13 @@ export default function AIPromptWizard({ name, onComplete, onApiComplete, onClos
         onApiComplete(result); // success — close wizard and fill editor
       } catch (e) {
         setAiLoading(false);
-        if (e.code === "API_UNAVAILABLE") {
-          // API failed — fall back to the manual prompt/paste flow
-          setAiError("AI generation unavailable. Here's a prompt you can paste into any AI yourself.");
-          const p = buildPrompt(name, newAnswers);
-          setPrompt(p);
-          animateTo("prompt");
-        }
+        // Fall back for ANY error — API failure, missing prop, parse error, anything
+        setAiError(
+          "AI generation unavailable. Here's a prompt you can paste into any AI yourself.",
+        );
+        const p = buildPrompt(name, newAnswers);
+        setPrompt(p);
+        animateTo("prompt");
       }
     } else {
       animateTo(null, () => {
@@ -172,7 +190,10 @@ export default function AIPromptWizard({ name, onComplete, onApiComplete, onClos
   };
 
   const goBack = () => {
-    if (questionIndex === 0) { onClose(); return; }
+    if (questionIndex === 0) {
+      onClose();
+      return;
+    }
     animateTo(null, () => {
       setQIndex((i) => i - 1);
       setCurrentAnswer(answers[QUESTIONS[questionIndex - 1].id] || "");
@@ -208,20 +229,30 @@ export default function AIPromptWizard({ name, onComplete, onApiComplete, onClos
       const parsed = parseAIOutput(pasteValue);
       onComplete(parsed);
     } catch {
-      setParseError("Couldn't parse that output. Make sure you copied the full JSON response from the AI.");
+      setParseError(
+        "Couldn't parse that output. Make sure you copied the full JSON response from the AI.",
+      );
     }
   };
 
   return (
-    <div className="apw-backdrop" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className={`apw-modal ${animating ? "apw-modal-exit" : "apw-modal-enter"}`}>
-
-        <button className="apw-close" onClick={onClose}>✕</button>
+    <div
+      className="apw-backdrop"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div
+        className={`apw-modal ${animating ? "apw-modal-exit" : "apw-modal-enter"}`}
+      >
+        <button className="apw-close" onClick={onClose}>
+          ✕
+        </button>
 
         {/* ── Phase: Questions ── */}
         {phase === "questions" && (
           <div className="apw-phase">
-            <div className="apw-eyebrow">Step {questionIndex + 1} of {QUESTIONS.length}</div>
+            <div className="apw-eyebrow">
+              Step {questionIndex + 1} of {QUESTIONS.length}
+            </div>
             <StepDots total={QUESTIONS.length} current={questionIndex} />
 
             <h2 className="apw-question">{q.question(name)}</h2>
@@ -265,9 +296,7 @@ export default function AIPromptWizard({ name, onComplete, onApiComplete, onClos
             )}
 
             {/* Error shown if API failed before falling back to prompt */}
-            {aiError && !aiLoading && (
-              <p className="apw-error">{aiError}</p>
-            )}
+            {aiError && !aiLoading && <p className="apw-error">{aiError}</p>}
 
             <div className="apw-nav">
               <button
@@ -285,8 +314,8 @@ export default function AIPromptWizard({ name, onComplete, onApiComplete, onClos
                 {aiLoading
                   ? "Generating…"
                   : isLast
-                  ? "Generate wiki →"
-                  : "Next →"}
+                    ? "Generate wiki →"
+                    : "Next →"}
               </button>
             </div>
           </div>
@@ -299,7 +328,8 @@ export default function AIPromptWizard({ name, onComplete, onApiComplete, onClos
             <h2 className="apw-question">Copy this into any AI</h2>
             <p className="apw-hint">
               Paste it into ChatGPT, Claude, Gemini, or any AI chat. Then copy
-              the entire response <strong>as it is</strong> and paste it back here.
+              the entire response <strong>as it is</strong> and paste it back
+              here.
             </p>
 
             <div className="apw-prompt-box">
@@ -309,18 +339,25 @@ export default function AIPromptWizard({ name, onComplete, onApiComplete, onClos
             <div className="apw-nav">
               <button
                 className="apw-btn-ghost"
-                onClick={() => animateTo("questions", () => {
-                  setQIndex(QUESTIONS.length - 1);
-                  setCurrentAnswer(answers[QUESTIONS[QUESTIONS.length - 1].id] || "");
-                  setAiError("");
-                })}
+                onClick={() =>
+                  animateTo("questions", () => {
+                    setQIndex(QUESTIONS.length - 1);
+                    setCurrentAnswer(
+                      answers[QUESTIONS[QUESTIONS.length - 1].id] || "",
+                    );
+                    setAiError("");
+                  })
+                }
               >
                 ← Edit answers
               </button>
               <button className="apw-btn-copy" onClick={copyPrompt}>
                 {copied ? "✓ Copied!" : "Copy prompt"}
               </button>
-              <button className="apw-btn-primary" onClick={() => animateTo("paste")}>
+              <button
+                className="apw-btn-primary"
+                onClick={() => animateTo("paste")}
+              >
                 I've got the output →
               </button>
             </div>
@@ -343,13 +380,19 @@ export default function AIPromptWizard({ name, onComplete, onApiComplete, onClos
               rows={8}
               placeholder={'{\n  "name": "...",\n  "lead": "...",\n  ...\n}'}
               value={pasteValue}
-              onChange={(e) => { setPasteValue(e.target.value); setParseError(""); }}
+              onChange={(e) => {
+                setPasteValue(e.target.value);
+                setParseError("");
+              }}
             />
 
             {parseError && <p className="apw-error">{parseError}</p>}
 
             <div className="apw-nav">
-              <button className="apw-btn-ghost" onClick={() => animateTo("prompt")}>
+              <button
+                className="apw-btn-ghost"
+                onClick={() => animateTo("prompt")}
+              >
                 ← Back to prompt
               </button>
               <button
@@ -362,7 +405,6 @@ export default function AIPromptWizard({ name, onComplete, onApiComplete, onClos
             </div>
           </div>
         )}
-
       </div>
     </div>
   );
