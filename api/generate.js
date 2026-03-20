@@ -6,12 +6,16 @@ export default async function handler(req, res) {
   try {
     const response = await fetch("https://ai.hackclub.com/proxy/v1/chat/completions", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.VITE_HACKCLUB_TOKEN}`,
+      },
       body: JSON.stringify(req.body),
     });
 
     if (!response.ok) {
-      return res.status(response.status).json({ error: `Upstream error ${response.status}` });
+      const body = await response.text();
+      return res.status(response.status).json({ error: body });
     }
 
     const data = await response.json();
