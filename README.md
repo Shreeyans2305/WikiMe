@@ -15,7 +15,7 @@ You pick a name, choose a shareable URL slug, fill in the content (or let an AI 
 ## Features
 
 - **Create a wiki in minutes** — a guided multi-step flow takes you from name to published page
-- **AI-assisted generation** — answer a few questions about the subject, get a ready-made prompt to paste into any AI (ChatGPT, Claude, Gemini, etc.), then paste the JSON output straight back into the app
+- **AI-assisted generation** — answer a few questions, and the app calls the Hackclub AI API (Gemini 2.5 Flash) to generate the full wiki automatically. If the API is unavailable, it falls back to a manual prompt you can paste into any AI of your choice
 - **Write it yourself** — fill in every section manually if you prefer full control
 - **Wikipedia-style layout** — infobox with photo, table of contents, named sections, references, categories
 - **Photo upload or URL** — upload an image from your device or paste a link; uploaded images go to Supabase Storage
@@ -35,6 +35,7 @@ You pick a name, choose a shareable URL slug, fill in the content (or let an AI 
 | **Routing** | React Router v7 |
 | **Database** | Supabase (Postgres) |
 | **File storage** | Supabase Storage |
+| **AI** | Hackclub AI API (`google/gemini-2.5-flash`) |
 | **Animations** | GSAP (card stack on homepage) |
 | **Hosting** | Vercel |
 
@@ -45,9 +46,9 @@ You pick a name, choose a shareable URL slug, fill in the content (or let an AI 
 ```
 src/
 ├── componenets/
-│   ├── AIPromptWizard.jsx   # Animated popup — builds AI prompt from questions
+│   ├── Aipromptwizard.jsx   # Animated popup — asks questions, calls AI, falls back to manual prompt
 │   ├── CardSwap.jsx         # GSAP 3D card stack animation
-│   ├── ImageUploader.jsx    # Upload file or paste URL, with live preview
+│   ├── Imageuploader.jsx    # Upload file or paste URL, with live preview
 │   ├── LetterGlitch.jsx     # Canvas-based glitch animation (404 page)
 │   ├── WikiPreviewCard.jsx  # Compact wiki card shown in homepage stack
 │   └── WikiTemplate.jsx     # Full Wikipedia-style wiki renderer
@@ -57,9 +58,12 @@ src/
 │   ├── WikiPage.jsx         # Public wiki view with share bar
 │   ├── EditWiki.jsx         # Password-gated edit page
 │   └── NotFound.jsx         # 404 page with LetterGlitch background
-└── utils/
-    ├── wikiStorage.js       # All Supabase read/write operations
-    └── uploadImage.js       # Supabase Storage image upload helper
+├── utils/
+│   ├── GenerateWiki.js      # Calls /api/generate and parses the JSON response
+│   ├── wikiStorage.js       # All Supabase read/write operations
+│   └── uploadImage.js       # Supabase Storage image upload helper
+api/
+└── generate.js              # Vercel serverless function — proxies requests to Hackclub AI
 ```
 
 ---
@@ -76,15 +80,19 @@ src/
 
 ### The AI generation path
 
-WikiMe doesn't call any AI API directly. Instead:
+When you choose "Generate with AI", a wizard opens and asks five questions:
 
-1. You answer 5 short questions (who they are, what they're known for, key facts, tone, extras)
-2. The app assembles a detailed prompt from your answers
-3. You copy the prompt and paste it into any AI chat of your choice
-4. The AI returns a JSON object — you paste it straight back into the app
-5. The editor pre-fills with all the generated content, which you can tweak before publishing
+1. Who is this person?
+2. What are they best known for?
+3. Any key facts to include? (dates, nationality, etc.)
+4. What tone? (Encyclopedic / Celebratory / Playful / Dramatic)
+5. Anything else to mention? (optional)
 
-This approach means you're not locked into one AI provider and the app stays free to run.
+Once you answer them, the app sends your answers to a **Vercel serverless function** (`api/generate.js`) which calls the Hackclub AI API using `google/gemini-2.5-flash`. Running the request server-side avoids browser CORS restrictions entirely. If the call succeeds, the editor pre-fills with the generated content automatically and you're taken straight to the editor.
+
+**If the API is unavailable** for any reason — missing token, rate limit, network error — the wizard falls back gracefully. It shows a ready-made prompt built from your answers that you can copy and paste into any AI chat (ChatGPT, Claude, Gemini, etc.). You paste the JSON output back into the wizard and the editor fills in identically to the automatic path.
+
+Either way you end up in the same editor where you can review and tweak everything before publishing.
 
 ---
 
@@ -143,9 +151,15 @@ In the root of the project (next to `package.json`), create a file called `.env`
 ```
 VITE_SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key-here
+VITE_HACKCLUB_TOKEN=your-hackclub-token-here
 ```
 
-Get both values from your Supabase dashboard under **Settings → API**.
+- Supabase values come from your project dashboard under **Settings → API**
+- The Hackclub token comes from [ai.hackclub.com](https://ai.hackclub.com) — sign in to get one
+
+Without `VITE_HACKCLUB_TOKEN`, AI generation will fail and automatically fall back to the manual prompt flow. The rest of the app works fine without it.
+
+The Vite dev server is configured to proxy `/api/generate` to the Hackclub endpoint locally, so CORS is not an issue during development.
 
 ### 4. Install and run
 
@@ -162,7 +176,10 @@ The app will be available at `http://localhost:5173`.
 
 1. Push your repo to GitHub
 2. Go to [vercel.com](https://vercel.com) and import the repo
-3. Add your two environment variables under **Settings → Environment Variables**
+3. Add all three environment variables under **Settings → Environment Variables**:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+   - `VITE_HACKCLUB_TOKEN`
 4. Create a `vercel.json` in the project root to fix client-side routing:
 
 ```json
@@ -172,6 +189,8 @@ The app will be available at `http://localhost:5173`.
 ```
 
 5. Deploy — every subsequent `git push` to `main` redeploys automatically
+
+Vercel automatically detects the `api/` folder and deploys `generate.js` as a serverless function. This handles the Hackclub AI requests server-side, which is what resolves the CORS issue in production.
 
 ---
 
