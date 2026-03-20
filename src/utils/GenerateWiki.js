@@ -1,10 +1,3 @@
-import { OpenRouter } from "@openrouter/sdk";
-
-const client = new OpenRouter({
-  apiKey: import.meta.env.VITE_HACKCLUB_TOKEN || "no-key",
-  serverURL: "https://ai.hackclub.com/proxy/v1",
-});
-
 export async function generateWiki(name, answers) {
   const toneMap = {
     encyclopedic: "neutral and encyclopedic, like Wikipedia",
@@ -49,21 +42,29 @@ Return ONLY a valid JSON object — no markdown, no backticks, no explanation be
   "seeAlso": [],
   "externalLinks": [],
   "categories": [],
-  "lastEdited": "DATEPLACEHOLDER"
+  "lastEdited": "${new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}"
 }
 
-Fill every string field with content — never leave them null. If a field genuinely does not apply, use an empty string "".`;
+Fill every string field — never leave them null. If a field doesn't apply, use an empty string "".`;
 
   try {
-    const response = await client.chat.send({
-      chatGenerationParams: {
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
         model: "google/gemini-2.5-flash",
         messages: [{ role: "user", content: prompt }],
-        stream: false,
-      },
+      }),
     });
 
-    const text = response.choices?.[0]?.message?.content;
+    if (!response.ok) {
+      const err = new Error(`API returned ${response.status}`);
+      err.code = "API_UNAVAILABLE";
+      throw err;
+    }
+
+    const data = await response.json();
+    const text = data.choices?.[0]?.message?.content;
 
     if (!text) {
       const err = new Error("Empty response from API");
@@ -72,14 +73,7 @@ Fill every string field with content — never leave them null. If a field genui
     }
 
     const clean = text.replace(/```json|```/g, "").trim();
-    const parsed = JSON.parse(clean);
-
-    // Ensure lastEdited is set correctly regardless of what the model put
-    parsed.lastEdited = new Date().toLocaleDateString("en-US", {
-      month: "long", day: "numeric", year: "numeric",
-    });
-
-    return parsed;
+    return JSON.parse(clean);
 
   } catch (e) {
     if (e.code === "API_UNAVAILABLE") throw e;
