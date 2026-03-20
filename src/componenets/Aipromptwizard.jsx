@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { generateWiki } from "../utils/generateWiki";
+import { generateWiki } from "../utils/GenerateWiki";
 import "./Aipromptwizard.css";
 
 const QUESTIONS = [
