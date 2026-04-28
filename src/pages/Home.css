@@ -18,6 +18,12 @@
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.home-root--dark {
+  background: #0b1020;
+  color: #e5e7eb;
 }
 
 /* Subtle background watermark */
@@ -36,6 +42,10 @@
   line-height: 1;
 }
 
+.home-root--dark::before {
+  color: rgba(255,255,255,0.04);
+}
+
 /* ── Left column ── */
 .home-left {
   flex: 1;
@@ -45,6 +55,14 @@
   gap: 0;
 }
 
+.home-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
 .home-eyebrow {
   font-family: 'DM Sans', sans-serif;
   font-size: 11px;
@@ -52,7 +70,13 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #888;
-  margin-bottom: 18px;
+  margin-bottom: 0;
+}
+
+.home-root--dark .home-eyebrow,
+.home-root--dark .home-hint,
+.home-root--dark .home-stat-label {
+  color: #9ca3af;
 }
 
 .home-title {
@@ -67,10 +91,18 @@
   text-align: left !important;
 }
 
+.home-root--dark .home-title {
+  color: #f9fafb !important;
+}
+
 .home-title-accent {
   color: #555;
   font-style: italic;
   font-weight: 400;
+}
+
+.home-root--dark .home-title-accent {
+  color: #cbd5e1;
 }
 
 .home-desc {
@@ -80,6 +112,10 @@
   line-height: 1.7;
   margin: 0 0 32px;
   max-width: 380px;
+}
+
+.home-root--dark .home-desc {
+  color: #cbd5e1;
 }
 
 /* ── Actions ── */
@@ -104,9 +140,41 @@
   letter-spacing: 0.01em;
 }
 
+.home-root--dark .home-btn-primary {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
 .home-btn-primary:hover {
   background: #333;
   transform: translateY(-1px);
+}
+
+.home-root--dark .home-btn-primary:hover {
+  background: #e2e8f0;
+}
+
+.home-theme-toggle {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1px solid #d6d3cc;
+  background: rgba(255,255,255,0.7);
+  color: #333;
+  border-radius: 999px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.home-theme-toggle:hover {
+  transform: translateY(-1px);
+}
+
+.home-root--dark .home-theme-toggle {
+  background: rgba(15,23,42,0.72);
+  border-color: rgba(148,163,184,0.35);
+  color: #e5e7eb;
 }
 
 .home-hint {
@@ -124,10 +192,33 @@
   border-top: 1px solid #ddd8cf;
 }
 
+.home-root--dark .home-stats,
+.home-root--dark .home-stat-div {
+  border-color: rgba(148,163,184,0.2);
+  background: rgba(148,163,184,0.2);
+}
+
+.home-root--dark .home-stat-num {
+  color: #f9fafb;
+}
+
+.home-root--dark .home-stats {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.55), rgba(15, 23, 42, 0.25));
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 16px;
+  padding: 18px 18px 16px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 10px 30px rgba(0,0,0,0.18);
+  backdrop-filter: blur(8px);
+}
+
 .home-stat {
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
+
+.home-root--dark .home-stat {
+  min-width: 0;
 }
 
 .home-stat-num {
@@ -146,10 +237,20 @@
   letter-spacing: 0.08em;
 }
 
+.home-root--dark .home-stat-label {
+  color: #94a3b8;
+}
+
 .home-stat-div {
   width: 1px;
   height: 28px;
   background: #ddd8cf;
+}
+
+.home-root--dark .home-stat-div {
+  width: 1px;
+  height: 34px;
+  background: linear-gradient(180deg, transparent, rgba(148,163,184,0.35), transparent);
 }
 
 /* ── Right column (card stack) ── */
@@ -158,6 +259,10 @@
   width: 320px;
   height: 420px;
   position: relative;
+}
+
+.home-root--dark .home-right {
+  filter: saturate(0.95);
 }
 
 /* ── Responsive ── */
@@ -184,6 +289,11 @@
     justify-content: center;
   }
   .home-stats {
+    justify-content: center;
+  }
+  .home-root--dark .home-stats {
+    width: 100%;
+    max-width: 420px;
     justify-content: center;
   }
   .home-right {
@@ -221,6 +331,10 @@
   .home-stats {
     gap: 14px;
   }
+  .home-root--dark .home-stats {
+    padding: 16px 14px 14px;
+    gap: 12px;
+  }
   .home-stat-num {
     font-size: 1.1rem;
   }
@@ -242,6 +356,19 @@
   background: #f7f5f0;
 }
 
+.heading--dark {
+  background: #0b1020;
+  color: #f9fafb;
+}
+
 body{
   background-color: #f7f5f0;
+}
+
+body {
+  transition: background-color 0.25s ease;
+}
+
+.home-root--dark .home-stat-div {
+  opacity: 0.35;
 }

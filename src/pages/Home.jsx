@@ -26,14 +26,34 @@ function useCardSize() {
 export const Home = () => {
   const navigate = useNavigate();
   const cardSize = useCardSize();
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const previousBackground = document.body.style.backgroundColor;
+    document.body.style.backgroundColor = darkMode ? '#0b1020' : '#f7f5f0';
+    return () => {
+      document.body.style.backgroundColor = previousBackground;
+    };
+  }, [darkMode]);
 
   return (
     <>
-    <h1 className='heading'>WikiMe</h1>
-    <div className="home-root">
+    <h1 className={`heading ${darkMode ? 'heading--dark' : ''}`}>WikiMe</h1>
+    <div className={`home-root ${darkMode ? 'home-root--dark' : ''}`}>
 
       <div className="home-left">
-        <div className="home-eyebrow">Free · Instant · Yours</div>
+        <div className="home-topbar">
+          <div className="home-eyebrow">Free · Instant · Yours</div>
+          <button
+            type="button"
+            className="home-theme-toggle"
+            onClick={() => setDarkMode((value) => !value)}
+            aria-pressed={darkMode}
+            aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {darkMode ? 'Light mode' : 'Dark mode'}
+          </button>
+        </div>
         <h1 className="home-title">
           Your wiki,<br />
           <span className="home-title-accent">written for you.</span>
@@ -80,8 +100,17 @@ export const Home = () => {
           skewAmount={3}
         >
           {[0, 1, 2, 3].map((i) => (
-            <Card key={i} style={{ border: '1px solid #a2a9b1', borderRadius: 8, overflow: 'hidden', background: '#fff', boxShadow: '0 2px 16px rgba(0,0,0,0.10)' }}>
-              <WikiPreviewCard index={i} />
+            <Card
+              key={i}
+              style={{
+                border: '1px solid #a2a9b1',
+                borderRadius: 8,
+                overflow: 'hidden',
+                background: darkMode ? '#111827' : '#fff',
+                boxShadow: darkMode ? '0 8px 24px rgba(0,0,0,0.45)' : '0 2px 16px rgba(0,0,0,0.10)',
+              }}
+            >
+              <WikiPreviewCard index={i} darkMode={darkMode} />
             </Card>
           ))}
         </CardSwap>
