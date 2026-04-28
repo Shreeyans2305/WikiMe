@@ -47,55 +47,57 @@ const PREVIEW_DATA = [
   },
 ];
 
-const WikiPreviewCard = ({ index = 0 }) => {
+const WikiPreviewCard = ({ index = 0, darkMode = false }) => {
   const d = PREVIEW_DATA[index % PREVIEW_DATA.length];
+  const theme = darkMode ? dark : light;
+  const styles = makeStyles(theme);
 
   return (
-    <div style={s.card}>
-      <div style={s.header}>
-        <div style={s.headerLeft}>
-          <div style={s.name}>{d.name}</div>
-          <div style={s.subtitle}>{d.subtitle}</div>
+    <div style={styles.card}>
+      <div style={styles.header}>
+        <div style={styles.headerLeft}>
+          <div style={styles.name}>{d.name}</div>
+          <div style={styles.subtitle}>{d.subtitle}</div>
         </div>
         {d.imageUrl && (
-          <div style={s.infoboxPhoto}>
-            <img src={d.imageUrl} alt={d.name} style={s.infoboxImg} />
+          <div style={styles.infoboxPhoto}>
+            <img src={d.imageUrl} alt={d.name} style={styles.infoboxImg} />
           </div>
         )}
       </div>
 
       {/* Divider */}
-      <div style={s.divider} />
+      <div style={styles.divider} />
 
       {/* Info table */}
-      <div style={s.infoGrid}>
+      <div style={styles.infoGrid}>
         {[['Born', d.born], ['Died', d.died], ['Occupation', d.occupation], ['Nationality', d.nationality]]
           .filter(([, v]) => v)
           .map(([label, value]) => (
             <React.Fragment key={label}>
-              <span style={s.infoLabel}>{label}</span>
-              <span style={s.infoValue}>{value}</span>
+              <span style={styles.infoLabel}>{label}</span>
+              <span style={styles.infoValue}>{value}</span>
             </React.Fragment>
           ))}
       </div>
 
       {/* Divider */}
-      <div style={s.divider} />
+      <div style={styles.divider} />
 
       {/* Lead text */}
-      <p style={s.lead}>{d.lead}</p>
+      <p style={styles.lead}>{d.lead}</p>
 
       {/* Tags */}
-      <div style={s.tags}>
+      <div style={styles.tags}>
         {d.tags.map(t => (
-          <span key={t} style={s.tag}>{t}</span>
+          <span key={t} style={styles.tag}>{t}</span>
         ))}
       </div>
 
       {/* Wikipedia-style footer */}
-      <div style={s.footer}>
-        <span style={s.footerDot}>●</span>
-        <span style={s.footerText}>WikiMe · Free Encyclopedia</span>
+      <div style={styles.footer}>
+        <span style={styles.footerDot}>●</span>
+        <span style={styles.footerText}>WikiMe · Free Encyclopedia</span>
       </div>
     </div>
   );
@@ -216,5 +218,121 @@ const s = {
     fontFamily: 'Linux Libertine, Georgia, serif',
   },
 };
+
+const light = {
+  cardBg: '#fff',
+  text: '#202122',
+  heading: '#000',
+  muted: '#54595d',
+  line: '#a2a9b1',
+  soft: '#f8f9fa',
+  tagBg: '#eaf3fb',
+  tagText: '#0645ad',
+  tagBorder: '#cde4f5',
+  footer: '#a2a9b1',
+  footerBorder: '#eaecf0',
+};
+
+const dark = {
+  cardBg: '#111827',
+  text: '#e5e7eb',
+  heading: '#f9fafb',
+  muted: '#9ca3af',
+  line: '#334155',
+  soft: '#0f172a',
+  tagBg: '#1e293b',
+  tagText: '#93c5fd',
+  tagBorder: '#334155',
+  footer: '#94a3b8',
+  footerBorder: '#334155',
+};
+
+function makeStyles(theme) {
+  return {
+    card: {
+      width: '100%',
+      height: '100%',
+      background: theme.cardBg,
+      fontFamily: 'Linux Libertine, Georgia, Times, serif',
+      color: theme.text,
+      display: 'flex',
+      flexDirection: 'column',
+      overflow: 'hidden',
+      padding: '20px 22px 14px',
+      boxSizing: 'border-box',
+      gap: 0,
+    },
+    header: s.header,
+    headerLeft: s.headerLeft,
+    infoboxPhoto: {
+      flexShrink: 0,
+      background: theme.soft,
+      padding: 3,
+    },
+    infoboxImg: s.infoboxImg,
+    name: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: theme.heading,
+      lineHeight: 1.2,
+      marginBottom: 3,
+    },
+    subtitle: {
+      fontSize: 12,
+      color: theme.muted,
+      fontStyle: 'italic',
+      lineHeight: 1.4,
+    },
+    divider: {
+      height: 1,
+      background: theme.line,
+      margin: '10px 0',
+    },
+    infoGrid: s.infoGrid,
+    infoLabel: {
+      fontWeight: 'bold',
+      color: theme.muted,
+      textAlign: 'right',
+      paddingRight: 4,
+    },
+    infoValue: {
+      color: theme.text,
+    },
+    lead: {
+      fontSize: 11.5,
+      lineHeight: 1.6,
+      color: theme.text,
+      margin: '6px 0',
+      flex: 1,
+      overflow: 'hidden',
+      display: '-webkit-box',
+      WebkitLineClamp: 5,
+      WebkitBoxOrient: 'vertical',
+    },
+    tags: s.tags,
+    tag: {
+      fontSize: 10,
+      background: theme.tagBg,
+      color: theme.tagText,
+      border: `1px solid ${theme.tagBorder}`,
+      borderRadius: 3,
+      padding: '2px 7px',
+    },
+    footer: {
+      marginTop: 10,
+      paddingTop: 8,
+      borderTop: `1px solid ${theme.footerBorder}`,
+      display: 'flex',
+      alignItems: 'center',
+      gap: 5,
+    },
+    footerDot: s.footerDot,
+    footerText: {
+      fontSize: 10,
+      color: theme.footer,
+      fontFamily: 'Linux Libertine, Georgia, serif',
+    },
+  };
+}
 
 export default WikiPreviewCard;
